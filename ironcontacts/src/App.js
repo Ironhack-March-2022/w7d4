@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import allContacts from './contacts.json';
 import './App.css';
+import ContactList from './ContactList';
+import SearchField from './SearchField';
 
 function App() {
 
   const [contacts, setContacts] = useState(allContacts.slice(0, 5))
 
-  const deleteContact = contactId => {
+  const [query, setQuery] = useState('')
+
+  function deleteContact(contactId) {
     setContacts(contacts => contacts.filter(contact => contact.id !== contactId))
   };
+
 
   const addContact = () => {
     const random = allContacts[Math.floor(Math.random() * allContacts.length)];
@@ -43,47 +48,17 @@ function App() {
 
       <h1>IronContacts</h1>
 
+      <SearchField setQuery={setQuery} />
+
       <button onClick={addContact}>Add Random Contact</button>
       <button onClick={sortByName}>Sort by name</button>
       <button onClick={sortByPopularity}>Sort by popularity</button>
 
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <table>
-          <thead>
-            <tr>
-              <th>Picture</th>
-              <th>Name</th>
-              <th>Popularity</th>
-              <th>Won an Oscar</th>
-              <th>Won an Emmy</th>
-            </tr>
-          </thead>
-          <tbody>
-            {contacts.map(contact => {
-              return (
-                <tr key={contact.id}>
-                  <td>
-                    <img
-                      src={contact.pictureUrl}
-                      height='100px'
-                      alt={contact.name}
-                    />
-                  </td>
-                  <td>{contact.name}</td>
-                  <td>{contact.popularity.toFixed(2)}</td>
-                  <td>{contact.wonOscar && '🏆'}</td>
-                  <td>{contact.wonEmmy && '🏆'}</td>
-                  <td>
-                    <button onClick={() => { deleteContact(contact.id) }}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <ContactList
+        contacts={contacts}
+        deleteContact={deleteContact}
+        query={query}
+      />
     </div>
   );
 }
